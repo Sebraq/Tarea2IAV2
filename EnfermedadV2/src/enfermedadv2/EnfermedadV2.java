@@ -15,6 +15,9 @@ public class EnfermedadV2 {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        Pantalla panta= new Pantalla();
+        panta.setVisible(true);
+        panta.setLocationRelativeTo(null);
     }
     
 }

@@ -14,26 +14,106 @@ public class Pantalla extends javax.swing.JFrame {
      * Creates new form Pantalla
      */
     private int index=0;
-    private String[] preguntas ={"¿Tiene sangrado?",
-        "¿Tiene distensión abdominal?",
-        "¿Tiene estreñimiento?",
-        "¿Tiene diarrea?",
-        "¿Tiene acidez gástrica?",
-        "¿Tiene incontinencia?",
-        "¿Tiene náuseas y vómitos?",
-        "¿Tiene dolor en el abdomen?",
-        "¿Tiene problemas para tragar?",
-        "¿Ha tenido aumento o pérdida de peso?"};
+    private String[] preguntas ={
+        "¿Ha experimentado hinchazon o distension abdominal ?",
+        "¿Tienes diarrea ?",
+        "¿Tienes gases ?",
+        "¿Ha sentido nauseas ?",
+        "¿Ha tenido dolor en el abdomen ?",
+        "¿Ha escuchando ruidos estomacales ?",
+        "¿Tuvo vomito ?",
+        "¿Ha sentido acidez estomacal ?",
+        "¿Tiene dificultad al tragar ?",
+        "¿Sufre de perdida de peso ?",
+        "¿Sufre de perdida de apetito ?",
+        "¿Ha notado heces con sangre ?",
+        "¿Sufre de ictericia ?",
+        "¿Se siente con fatiga ?",
+        "¿Tiene dolor estomacal ?",
+        "¿Ha notado estrechamiento de heces ?",
+    };
     
-    private String[] intolLactosa ={"distension abdominal","diarrea","gases","nauseas","dolor abdominal","ruidos estomacales","vomito"};
-    private String[] cancerColon = {"diarrea","estrechamiento de heces","heces oscuras o sangrado","dolor abdominal","fatiga","perdida de peso"};
-    private String [] cancerEstomago = {"nauseas","vomito","acidez estomacal","perdida de peso","perdida de apetito","hinchazon","heces oscuras o sangrando","icteria","fatiga","dolor","dolor estomacal"};
+    private String[] intolLactosa ={"hinchazon o distension abdominal","diarrea","gases","nauseas","dolor en el abdomen","ruidos estomacales","vomito"};
+    private String[] cancerEstomago = {"nauseas","vomito","acidez estomacal","dificultad al tragar","perdida de peso","perdida de apetito","hinchazon o distension abdominal","heces con sangre","ictericia","fatiga","dolor estomacal"};
+    private String [] cancerColon = {"diarrea","estrechamiento de heces","heces con sangre","dolor en el abdomen","fatiga","perdida de peso"};
     
+    //Contadores para cada enfermedad
+    private int contadorIntolLactosa = 0;
+    private int contadorCancerEstomago = 0;
+    private int contadorCancerColon = 0;
     
     public Pantalla() {
         initComponents();
+        mostrarPregunta();
     }
 
+    
+    private void mostrarPregunta(){
+        if(index<preguntas.length){
+            jLabel2.setText(preguntas[index]);
+        }else{
+            //Mostramos resultado
+            mostrarResultados();
+        }
+    };
+    
+    private void siguientePregunta(){
+        index++;
+        mostrarPregunta();
+    };
+    
+    private void verificarSintoma(String respuesta){
+        if (index >= preguntas.length) {
+            return;
+        }
+        String preguntaAct = preguntas[index].toLowerCase();
+        
+        //Intolerancia Lactosa
+        for (String sintoma : intolLactosa) {
+            if (preguntaAct.contains(sintoma.toLowerCase()) && respuesta.equals("Sí")) {
+                contadorIntolLactosa++;
+                break;
+            }
+        }
+        //Cancer Estomago
+        for (String sintoma : cancerEstomago) {
+            if (preguntaAct.contains(sintoma.toLowerCase()) && respuesta.equals("Sí")) {
+                contadorCancerEstomago++;
+                break;
+            }
+        }
+
+        // Verificar si la pregunta contiene algún síntoma de cáncer de colon
+        for (String sintoma : cancerColon) {
+            if (preguntaAct.contains(sintoma.toLowerCase()) && respuesta.equals("Sí")) {
+                contadorCancerColon++;
+                break;
+            }
+        }
+    };
+    
+    private void mostrarResultados() {
+        String resultado = "<html>Resultados:<br>" +
+                "Intolerancia a la lactosa: " + contadorIntolLactosa + " síntomas<br>" +
+                "Cáncer de estómago: " + contadorCancerEstomago + " síntomas<br>" +
+                "Cáncer de colon: " + contadorCancerColon + " síntomas<br><br>";
+
+        // Determinar la enfermedad con más síntomas
+        if (contadorIntolLactosa > contadorCancerEstomago && contadorIntolLactosa > contadorCancerColon) {
+            resultado += "Posible diagnóstico: Intolerancia a la lactosa";
+        } else if (contadorCancerEstomago > contadorIntolLactosa && contadorCancerEstomago > contadorCancerColon) {
+            resultado += "Posible diagnóstico: Cáncer de estómago";
+        } else if (contadorCancerColon > contadorIntolLactosa && contadorCancerColon > contadorCancerEstomago) {
+            resultado += "Posible diagnóstico: Cáncer de colon";
+        } else {
+            resultado += "No se pudo determinar un diagnóstico claro.";
+        }
+
+        resultado += "</html>";
+        jLabel2.setText(resultado); // Mostrar los resultados en jLabel2
+    }
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -44,44 +124,62 @@ public class Pantalla extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btn_si = new javax.swing.JButton();
+        btn_no = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        jButton3 = new javax.swing.JButton();
+        btn_rep = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setText("Diagnostico de enfermedades");
 
-        jButton1.setText("jButton1");
+        btn_si.setText("Si");
+        btn_si.setName(""); // NOI18N
+        btn_si.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_siActionPerformed(evt);
+            }
+        });
 
-        jButton2.setText("jButton2");
+        btn_no.setText("No");
+        btn_no.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_noActionPerformed(evt);
+            }
+        });
 
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("jLabel2");
+        jLabel2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
-        jButton3.setText("jButton3");
+        btn_rep.setText("Repetir");
+        btn_rep.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_repActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(130, Short.MAX_VALUE)
+                .addContainerGap(136, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(160, 160, 160))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jButton1)
+                        .addComponent(btn_si)
                         .addGap(90, 90, 90)
-                        .addComponent(jButton2)
+                        .addComponent(btn_no)
                         .addGap(112, 112, 112))))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton3)))
+                        .addComponent(btn_rep)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -93,15 +191,35 @@ public class Pantalla extends javax.swing.JFrame {
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 117, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(btn_si)
+                    .addComponent(btn_no))
                 .addGap(82, 82, 82)
-                .addComponent(jButton3)
+                .addComponent(btn_rep)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btn_siActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_siActionPerformed
+        // TODO add your handling code here:
+        verificarSintoma("Sí");
+        siguientePregunta();
+    }//GEN-LAST:event_btn_siActionPerformed
+
+    private void btn_noActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_noActionPerformed
+        // TODO add your handling code here:
+        siguientePregunta();
+    }//GEN-LAST:event_btn_noActionPerformed
+
+    private void btn_repActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_repActionPerformed
+        // TODO add your handling code here:
+        index = 0;
+        contadorIntolLactosa = 0;
+        contadorCancerEstomago = 0;
+        contadorCancerColon = 0;
+        mostrarPregunta();
+    }//GEN-LAST:event_btn_repActionPerformed
 
     /**
      * @param args the command line arguments
@@ -139,9 +257,9 @@ public class Pantalla extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton btn_no;
+    private javax.swing.JButton btn_rep;
+    private javax.swing.JButton btn_si;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     // End of variables declaration//GEN-END:variables
