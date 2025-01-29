@@ -4,6 +4,8 @@
  */
 package enfermedadv2;
 
+import java.awt.Color;
+import javax.swing.*;
 /**
  *
  * @author ACER
@@ -41,16 +43,19 @@ public class Pantalla extends javax.swing.JFrame {
     private int contadorIntolLactosa = 0;
     private int contadorCancerEstomago = 0;
     private int contadorCancerColon = 0;
+    private int contadorSintomasTotales=0;
     
     public Pantalla() {
         initComponents();
         mostrarPregunta();
+        Color colorFondo = Color.decode("#D0DDD0");
+        getContentPane().setBackground(colorFondo);
     }
 
     
     private void mostrarPregunta(){
         if(index<preguntas.length){
-            jLabel2.setText(preguntas[index]);
+            jTextArea1.setText(preguntas[index]);
         }else{
             //Mostramos resultado
             mostrarResultados();
@@ -66,6 +71,7 @@ public class Pantalla extends javax.swing.JFrame {
         if (index >= preguntas.length) {
             return;
         }
+        contadorSintomasTotales++;//Contador de sintomas totales.
         String preguntaAct = preguntas[index].toLowerCase();
         
         //Intolerancia Lactosa
@@ -91,13 +97,36 @@ public class Pantalla extends javax.swing.JFrame {
             }
         }
     };
+    private double calcularPorcentaje(int sintomasIdentificados,int totalSintomas){
+      if(totalSintomas == 0)return 0; //Evitamos la division por 0
+      double calculo = ((double)sintomasIdentificados/totalSintomas) * 100;
+//      System.out.println(sintomasIdentificados);
+//      System.out.println(totalSintomas);
+//      System.out.println(calculo);
+      return calculo;
+    };
     
     private void mostrarResultados() {
-        String resultado = "<html>Resultados:<br>" +
-                "Intolerancia a la lactosa: " + contadorIntolLactosa + " síntomas<br>" +
-                "Cáncer de estómago: " + contadorCancerEstomago + " síntomas<br>" +
-                "Cáncer de colon: " + contadorCancerColon + " síntomas<br><br>";
-
+        double porcIntoLactosa = calcularPorcentaje(contadorIntolLactosa,contadorSintomasTotales);
+        double porcCanEstomago = calcularPorcentaje(contadorCancerEstomago,contadorSintomasTotales);
+        double porcCancerColon = calcularPorcentaje(contadorCancerColon,contadorSintomasTotales);
+        
+        
+//        double porcIntoLactosa = calcularPorcentaje(contadorIntolLactosa,intolLactosa.length);
+//        double porcCanEstomago = calcularPorcentaje(contadorCancerEstomago,cancerEstomago.length);
+//        double porcCancerColon = calcularPorcentaje(contadorCancerColon,cancerColon.length);
+        
+        String resultado = "***Resultados***:\n" +
+                "- Intolerancia a la lactosa: " + contadorIntolLactosa + " de " + contadorSintomasTotales + " síntomas (" + String.format("%.2f", porcIntoLactosa) + "%)\n" +
+                "- Cáncer de estómago: " + contadorCancerEstomago + " de " + contadorSintomasTotales + " síntomas (" + String.format("%.2f", porcCanEstomago) + "%)\n" +
+                "- Cáncer de colon: " + contadorCancerColon + " de " + contadorSintomasTotales + " síntomas (" + String.format("%.2f", porcCancerColon) + "%)\n\n";
+        
+//        String resultado = "***Resultados***:\n" +
+//                "- Intolerancia a la lactosa: " + contadorIntolLactosa + " de " + intolLactosa.length + " síntomas (" + String.format("%.2f", porcIntoLactosa) + "%)\n" +
+//                "- Cáncer de estómago: " + contadorCancerEstomago + " de " + cancerEstomago.length + " síntomas (" + String.format("%.2f", porcCanEstomago) + "%)\n" +
+//                "- Cáncer de colon: " + contadorCancerColon + " de " + cancerColon.length + " síntomas (" + String.format("%.2f", porcCancerColon) + "%)\n\n";
+//        
+        
         // Determinar la enfermedad con más síntomas
         if (contadorIntolLactosa > contadorCancerEstomago && contadorIntolLactosa > contadorCancerColon) {
             resultado += "Posible diagnóstico: Intolerancia a la lactosa";
@@ -106,11 +135,10 @@ public class Pantalla extends javax.swing.JFrame {
         } else if (contadorCancerColon > contadorIntolLactosa && contadorCancerColon > contadorCancerEstomago) {
             resultado += "Posible diagnóstico: Cáncer de colon";
         } else {
-            resultado += "No se pudo determinar un diagnóstico claro.";
+            resultado += "No se pudo determinar un diagnóstico claro. Intentelo de nuevo. ";
         }
 
-        resultado += "</html>";
-        jLabel2.setText(resultado); // Mostrar los resultados en jLabel2
+        jTextArea1.setText(resultado); // Mostrar los resultados en jTextArea1
     }
     
     
@@ -126,14 +154,24 @@ public class Pantalla extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         btn_si = new javax.swing.JButton();
         btn_no = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
         btn_rep = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(50, 130, 184));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        setResizable(false);
 
-        jLabel1.setText("Diagnostico de enfermedades");
+        jLabel1.setFont(new java.awt.Font("Roboto", 1, 24)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(114, 125, 115));
+        jLabel1.setText("Asistente de Diagnóstico Clínico");
 
+        btn_si.setBackground(new java.awt.Color(100, 200, 100));
+        btn_si.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
+        btn_si.setForeground(new java.awt.Color(0, 0, 0));
         btn_si.setText("Si");
+        btn_si.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         btn_si.setName(""); // NOI18N
         btn_si.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -141,60 +179,72 @@ public class Pantalla extends javax.swing.JFrame {
             }
         });
 
+        btn_no.setBackground(new java.awt.Color(200, 70, 70));
+        btn_no.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
+        btn_no.setForeground(new java.awt.Color(0, 0, 0));
         btn_no.setText("No");
+        btn_no.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         btn_no.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_noActionPerformed(evt);
             }
         });
 
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("jLabel2");
-        jLabel2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-
+        btn_rep.setBackground(new java.awt.Color(204, 204, 0));
+        btn_rep.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
+        btn_rep.setForeground(new java.awt.Color(0, 0, 0));
         btn_rep.setText("Repetir");
+        btn_rep.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         btn_rep.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_repActionPerformed(evt);
             }
         });
 
+        jTextArea1.setEditable(false);
+        jTextArea1.setColumns(20);
+        jTextArea1.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        jTextArea1.setRows(5);
+        jScrollPane1.setViewportView(jTextArea1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(136, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btn_si, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(32, 32, 32)
+                        .addComponent(btn_no, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(159, 159, 159))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel1)
-                        .addGap(160, 160, 160))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(btn_si)
-                        .addGap(90, 90, 90)
-                        .addComponent(btn_no)
-                        .addGap(112, 112, 112))))
-            .addGroup(layout.createSequentialGroup()
+                        .addGap(69, 69, 69))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 49, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btn_rep)))
-                .addContainerGap())
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(41, 41, 41))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btn_rep, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(27, 27, 27)
+                .addGap(38, 38, 38)
                 .addComponent(jLabel1)
-                .addGap(43, 43, 43)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 117, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btn_si)
-                    .addComponent(btn_no))
-                .addGap(82, 82, 82)
-                .addComponent(btn_rep)
+                    .addComponent(btn_si, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_no, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
+                .addComponent(btn_rep, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -218,6 +268,7 @@ public class Pantalla extends javax.swing.JFrame {
         contadorIntolLactosa = 0;
         contadorCancerEstomago = 0;
         contadorCancerColon = 0;
+        contadorSintomasTotales=0;
         mostrarPregunta();
     }//GEN-LAST:event_btn_repActionPerformed
 
@@ -249,6 +300,12 @@ public class Pantalla extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
+        try {
+            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Pantalla().setVisible(true);
@@ -261,6 +318,7 @@ public class Pantalla extends javax.swing.JFrame {
     private javax.swing.JButton btn_rep;
     private javax.swing.JButton btn_si;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea jTextArea1;
     // End of variables declaration//GEN-END:variables
 }
